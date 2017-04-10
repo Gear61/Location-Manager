@@ -1,4 +1,4 @@
-package com.randomappsinc.locationmanager;
+package com.randomappsinc.locationmanager.Activities;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -9,6 +9,8 @@ import android.view.MenuItem;
 
 import com.joanzapata.iconify.IconDrawable;
 import com.joanzapata.iconify.fonts.IoniconsIcons;
+import com.randomappsinc.locationmanager.R;
+import com.randomappsinc.locationmanager.Utils.UIUtils;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -36,21 +38,12 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_main, menu);
+        UIUtils.loadMenuIcon(menu, R.id.settings, IoniconsIcons.ion_android_settings);
         return true;
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
-        }
-
         return super.onOptionsItemSelected(item);
     }
 }
