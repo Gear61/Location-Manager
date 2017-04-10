@@ -1,4 +1,9 @@
 <resources>
-    <string name="app_name">Location Manager</string>
-    <string name="action_settings">Settings</string>
+    <string name="app_name">Location Manager Plus</string>
+    <string name="settings">Settings</string>
+
+    <string name="no_locations">
+        You have no saved locations.
+        Click the {ion-location} button below to add one.
+    </string>
 </resources>
