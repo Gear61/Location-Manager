@@ -1,13 +1,18 @@
 package com.randomappsinc.locationmanager.Activities;
 
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import com.afollestad.materialdialogs.DialogAction;
+import com.afollestad.materialdialogs.MaterialDialog;
 import com.joanzapata.iconify.IconDrawable;
 import com.joanzapata.iconify.fonts.IoniconsIcons;
+import com.randomappsinc.locationmanager.Persistence.PreferencesManager;
 import com.randomappsinc.locationmanager.R;
 import com.randomappsinc.locationmanager.Utils.UIUtils;
 
@@ -32,6 +37,25 @@ public class MainActivity extends StandardActivity {
         ButterKnife.bind(this);
 
         addLocation.setImageDrawable(new IconDrawable(this, IoniconsIcons.ion_location).colorRes(R.color.white));
+
+        if (PreferencesManager.get().shouldAskToRate()) {
+            new MaterialDialog.Builder(this)
+                    .cancelable(false)
+                    .content(R.string.please_rate)
+                    .negativeText(R.string.no_im_good)
+                    .positiveText(R.string.will_rate)
+                    .onPositive(new MaterialDialog.SingleButtonCallback() {
+                        @Override
+                        public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                            Uri uri = Uri.parse("market://details?id=" + getApplicationContext().getPackageName());
+                            Intent intent = new Intent(Intent.ACTION_VIEW, uri);
+                            if (getPackageManager().queryIntentActivities(intent, 0).size() > 0) {
+                                startActivity(intent);
+                            }
+                        }
+                    })
+                    .show();
+        }
     }
 
     @Override
