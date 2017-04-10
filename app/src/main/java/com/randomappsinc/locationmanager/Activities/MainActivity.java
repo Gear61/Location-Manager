@@ -1,12 +1,19 @@
 package com.randomappsinc.locationmanager.Activities;
 
+import android.Manifest;
+import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.location.Location;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
+import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
@@ -14,13 +21,23 @@ import com.joanzapata.iconify.IconDrawable;
 import com.joanzapata.iconify.fonts.IoniconsIcons;
 import com.randomappsinc.locationmanager.Persistence.PreferencesManager;
 import com.randomappsinc.locationmanager.R;
+import com.randomappsinc.locationmanager.Utils.PermissionUtils;
 import com.randomappsinc.locationmanager.Utils.UIUtils;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
+import io.nlopez.smartlocation.OnLocationUpdatedListener;
+import io.nlopez.smartlocation.SmartLocation;
 
 public class MainActivity extends StandardActivity {
+    @BindView(R.id.parent) View parent;
     @BindView(R.id.add_location) FloatingActionButton addLocation;
+
+    private Context context;
+    private boolean locationFetched;
+    private Handler locationChecker;
+    private Runnable locationCheckTask;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,8 +52,20 @@ public class MainActivity extends StandardActivity {
 
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
+        context = this;
 
         addLocation.setImageDrawable(new IconDrawable(this, IoniconsIcons.ion_location).colorRes(R.color.white));
+
+        locationChecker = new Handler();
+        locationCheckTask = new Runnable() {
+            @Override
+            public void run() {
+                SmartLocation.with(context).location().stop();
+                if (!locationFetched) {
+                    UIUtils.showSnackbar(parent, getString(R.string.auto_location_fail));
+                }
+            }
+        };
 
         if (PreferencesManager.get().shouldAskToRate()) {
             new MaterialDialog.Builder(this)
@@ -56,6 +85,63 @@ public class MainActivity extends StandardActivity {
                     })
                     .show();
         }
+    }
+
+    @OnClick(R.id.add_location)
+    public void addLocation() {
+        if (PermissionUtils.isPermissionGranted(Manifest.permission.ACCESS_FINE_LOCATION)) {
+            fetchLocation();
+        } else {
+            PermissionUtils.requestPermission(this, Manifest.permission.ACCESS_FINE_LOCATION, 1);
+        }
+    }
+
+    public void fetchLocation() {
+        // Cancel previous searches
+        SmartLocation.with(this).location().stop();
+        locationChecker.removeCallbacks(locationCheckTask);
+
+        if (SmartLocation.with(this).location().state().locationServicesEnabled()) {
+            locationFetched = false;
+            SmartLocation.with(this).location()
+                    .oneFix()
+                    .start(new OnLocationUpdatedListener() {
+                        @Override
+                        public void onLocationUpdated(Location location) {
+                            SmartLocation.with(context).location().stop();
+                            locationChecker.removeCallbacks(locationCheckTask);
+                            locationFetched = true;
+                        }
+                    });
+            locationChecker.postDelayed(locationCheckTask, 10000L);
+        } else {
+            showLocationServicesDialog();
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String permissions[], @NonNull int[] grantResults) {
+        // If they give us access to their location, fetch location, otherwise, pester them for permission again
+        if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+            fetchLocation();
+        } else {
+            PermissionUtils.requestPermission(this, Manifest.permission.ACCESS_FINE_LOCATION, 1);
+
+        }
+    }
+
+    private void showLocationServicesDialog() {
+        new MaterialDialog.Builder(this)
+                .content(R.string.location_services_needed)
+                .negativeText(android.R.string.cancel)
+                .positiveText(android.R.string.yes)
+                .onPositive(new MaterialDialog.SingleButtonCallback() {
+                    @Override
+                    public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                        startActivity(new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS));
+                    }
+                })
+                .show();
     }
 
     @Override
