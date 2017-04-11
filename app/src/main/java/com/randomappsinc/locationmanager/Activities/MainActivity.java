@@ -21,6 +21,7 @@ import com.afollestad.materialdialogs.MaterialDialog;
 import com.joanzapata.iconify.IconDrawable;
 import com.joanzapata.iconify.fonts.IoniconsIcons;
 import com.randomappsinc.locationmanager.Adapters.LocationsAdapter;
+import com.randomappsinc.locationmanager.Models.SavedLocation;
 import com.randomappsinc.locationmanager.Persistence.DatabaseManager;
 import com.randomappsinc.locationmanager.Persistence.PreferencesManager;
 import com.randomappsinc.locationmanager.R;
@@ -30,6 +31,7 @@ import com.randomappsinc.locationmanager.Utils.UIUtils;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import butterknife.OnItemClick;
 import io.nlopez.smartlocation.OnLocationUpdatedListener;
 import io.nlopez.smartlocation.SmartLocation;
 
@@ -115,14 +117,23 @@ public class MainActivity extends StandardActivity {
         }
     }
 
-    public void fetchLocation() {
-        fetchingLocation.show();
+    @OnItemClick(R.id.locations)
+    public void startNavigation(int position) {
+        SavedLocation location = locationsAdapter.getItem(position);
+        String mapUri = "google.navigation:q=" + String.valueOf(location.getLatitude())
+                + ", " + String.valueOf(location.getLongitude());
+        startActivity(Intent.createChooser(
+                new Intent(android.content.Intent.ACTION_VIEW, Uri.parse(mapUri)),
+                getString(R.string.navigate_with)));
+    }
 
+    public void fetchLocation() {
         // Cancel previous searches
         SmartLocation.with(this).location().stop();
         locationChecker.removeCallbacks(locationCheckTask);
 
         if (SmartLocation.with(this).location().state().locationServicesEnabled()) {
+            fetchingLocation.show();
             locationFetched = false;
             SmartLocation.with(this).location()
                     .oneFix()
@@ -176,7 +187,6 @@ public class MainActivity extends StandardActivity {
             fetchLocation();
         } else {
             PermissionUtils.requestPermission(this, Manifest.permission.ACCESS_FINE_LOCATION, 1);
-
         }
     }
 

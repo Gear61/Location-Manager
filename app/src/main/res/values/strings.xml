@@ -8,8 +8,8 @@
     </string>
 
     <string name="please_rate">
-        If you have a couple seconds, please rate GO Database in the Play Store!
-        Every good rating really goes a long way towards motivating us to keep
+        If you have a couple seconds, please rate Location Manager Plus in the Play Store!
+        Every good rating really goes a long way towards motivating me to keep
         improving this app. Thank you!
     </string>
     <string name="will_rate">Sure, I\'ll help</string>
@@ -37,4 +37,6 @@
     <string name="set_location_title">Set Location Title</string>
     <string name="title_hint">Where are you currently?</string>
     <string name="add">Add</string>
+
+    <string name="navigate_with">Navigate with</string>
 </resources>
