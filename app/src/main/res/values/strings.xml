@@ -20,6 +20,7 @@
         Please try again or reset location services.
     </string>
 
+    <string name="fetching_location">Fetching your location&#8230;</string>
     <string name="location_services_needed">
         You need to enable location services so we can get your current location.
     </string>
@@ -30,4 +31,10 @@
 
     <string name="trash_icon">{ion-trash-a}</string>
     <string name="edit_icon">{ion-edit}</string>
+
+    <string name="unknown">Unknown</string>
+
+    <string name="set_location_title">Set Location Title</string>
+    <string name="title_hint">Where are you currently?</string>
+    <string name="add">Add</string>
 </resources>

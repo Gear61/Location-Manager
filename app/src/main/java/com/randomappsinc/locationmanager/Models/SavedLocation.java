@@ -11,7 +11,7 @@ import com.randomappsinc.locationmanager.Utils.MyApplication;
  * Created by alexanderchiou on 4/10/17.
  */
 
-public class Location {
+public class SavedLocation {
     private String title;
     private String address;
     private double latitude;

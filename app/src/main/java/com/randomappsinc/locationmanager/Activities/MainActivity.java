@@ -21,6 +21,7 @@ import com.afollestad.materialdialogs.MaterialDialog;
 import com.joanzapata.iconify.IconDrawable;
 import com.joanzapata.iconify.fonts.IoniconsIcons;
 import com.randomappsinc.locationmanager.Adapters.LocationsAdapter;
+import com.randomappsinc.locationmanager.Persistence.DatabaseManager;
 import com.randomappsinc.locationmanager.Persistence.PreferencesManager;
 import com.randomappsinc.locationmanager.R;
 import com.randomappsinc.locationmanager.Utils.PermissionUtils;
@@ -43,6 +44,7 @@ public class MainActivity extends StandardActivity {
     private Handler locationChecker;
     private Runnable locationCheckTask;
     private LocationsAdapter locationsAdapter;
+    private MaterialDialog fetchingLocation;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,11 +62,17 @@ public class MainActivity extends StandardActivity {
         context = this;
 
         addLocation.setImageDrawable(new IconDrawable(this, IoniconsIcons.ion_location).colorRes(R.color.white));
+        locationsAdapter = new LocationsAdapter(this, noLocations);
+        locations.setAdapter(locationsAdapter);
 
         locationChecker = new Handler();
         locationCheckTask = new Runnable() {
             @Override
             public void run() {
+                if (fetchingLocation.isShowing()) {
+                    fetchingLocation.dismiss();
+                }
+
                 SmartLocation.with(context).location().stop();
                 if (!locationFetched) {
                     UIUtils.showSnackbar(parent, getString(R.string.auto_location_fail));
@@ -72,8 +80,11 @@ public class MainActivity extends StandardActivity {
             }
         };
 
-        locationsAdapter = new LocationsAdapter(this, noLocations);
-        locations.setAdapter(locationsAdapter);
+        fetchingLocation = new MaterialDialog.Builder(this)
+                .content(R.string.fetching_location)
+                .progress(true, 0)
+                .cancelable(false)
+                .build();
 
         if (PreferencesManager.get().shouldAskToRate()) {
             new MaterialDialog.Builder(this)
@@ -105,6 +116,8 @@ public class MainActivity extends StandardActivity {
     }
 
     public void fetchLocation() {
+        fetchingLocation.show();
+
         // Cancel previous searches
         SmartLocation.with(this).location().stop();
         locationChecker.removeCallbacks(locationCheckTask);
@@ -119,12 +132,41 @@ public class MainActivity extends StandardActivity {
                             SmartLocation.with(context).location().stop();
                             locationChecker.removeCallbacks(locationCheckTask);
                             locationFetched = true;
+                            fetchingLocation.dismiss();
+                            setTitle(location);
                         }
                     });
             locationChecker.postDelayed(locationCheckTask, 10000L);
         } else {
             showLocationServicesDialog();
         }
+    }
+
+    private void setTitle(final Location location) {
+        String hint = getString(R.string.title_hint);
+        new MaterialDialog.Builder(this)
+                .cancelable(false)
+                .title(R.string.set_location_title)
+                .alwaysCallInputCallback()
+                .input(hint, "", new MaterialDialog.InputCallback() {
+                    @Override
+                    public void onInput(@NonNull MaterialDialog dialog, CharSequence input) {
+                        String title = input.toString().trim();
+                        boolean shouldDisable = DatabaseManager.get().isDuplicate(title) || title.isEmpty();
+                        dialog.getActionButton(DialogAction.POSITIVE).setEnabled(!shouldDisable);
+                    }
+                })
+                .negativeText(android.R.string.no)
+                .positiveText(R.string.add)
+                .onPositive(new MaterialDialog.SingleButtonCallback() {
+                    @Override
+                    public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                        String title = dialog.getInputEditText().getText().toString().trim();
+                        DatabaseManager.get().addLocation(location, title);
+                        locationsAdapter.resyncWithDB();
+                    }
+                })
+                .show();
     }
 
     @Override
