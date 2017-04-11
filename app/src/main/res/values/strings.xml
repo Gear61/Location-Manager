@@ -23,4 +23,11 @@
     <string name="location_services_needed">
         You need to enable location services so we can get your current location.
     </string>
+
+    <string name="title_prefix">Title:&#160;</string>
+    <string name="address_prefix">Address:&#160;</string>
+    <string name="latlong_prefix">Latitude/Longitude:&#160;</string>
+
+    <string name="trash_icon">{ion-trash-a}</string>
+    <string name="edit_icon">{ion-edit}</string>
 </resources>

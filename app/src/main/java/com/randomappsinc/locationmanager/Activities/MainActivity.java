@@ -14,11 +14,13 @@ import android.support.design.widget.FloatingActionButton;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ListView;
 
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.joanzapata.iconify.IconDrawable;
 import com.joanzapata.iconify.fonts.IoniconsIcons;
+import com.randomappsinc.locationmanager.Adapters.LocationsAdapter;
 import com.randomappsinc.locationmanager.Persistence.PreferencesManager;
 import com.randomappsinc.locationmanager.R;
 import com.randomappsinc.locationmanager.Utils.PermissionUtils;
@@ -32,12 +34,15 @@ import io.nlopez.smartlocation.SmartLocation;
 
 public class MainActivity extends StandardActivity {
     @BindView(R.id.parent) View parent;
+    @BindView(R.id.locations) ListView locations;
+    @BindView(R.id.no_locations) View noLocations;
     @BindView(R.id.add_location) FloatingActionButton addLocation;
 
     private Context context;
     private boolean locationFetched;
     private Handler locationChecker;
     private Runnable locationCheckTask;
+    private LocationsAdapter locationsAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -66,6 +71,9 @@ public class MainActivity extends StandardActivity {
                 }
             }
         };
+
+        locationsAdapter = new LocationsAdapter(this, noLocations);
+        locations.setAdapter(locationsAdapter);
 
         if (PreferencesManager.get().shouldAskToRate()) {
             new MaterialDialog.Builder(this)
