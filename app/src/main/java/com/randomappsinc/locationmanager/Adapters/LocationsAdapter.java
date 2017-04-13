@@ -2,6 +2,7 @@ package com.randomappsinc.locationmanager.Adapters;
 
 import android.content.Context;
 import android.support.annotation.NonNull;
+import android.text.InputType;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -103,7 +104,33 @@ public class LocationsAdapter extends BaseAdapter {
 
         @OnClick(R.id.edit_icon)
         public void editTitle() {
+            String hint = context.getString(R.string.location_title);
+            final String originalTitle = getItem(position).getTitle();
 
+            new MaterialDialog.Builder(context)
+                    .title(R.string.edit_location_title)
+                    .alwaysCallInputCallback()
+                    .inputType(InputType.TYPE_TEXT_FLAG_CAP_WORDS)
+                    .input(hint, "", new MaterialDialog.InputCallback() {
+                        @Override
+                        public void onInput(@NonNull MaterialDialog dialog, CharSequence input) {
+                            String title = input.toString().trim();
+                            boolean shouldDisable = DatabaseManager.get().isDuplicate(title) || title.isEmpty();
+                            dialog.getActionButton(DialogAction.POSITIVE).setEnabled(!shouldDisable);
+                        }
+                    })
+                    .negativeText(android.R.string.no)
+                    .positiveText(R.string.rename)
+                    .onPositive(new MaterialDialog.SingleButtonCallback() {
+                        @Override
+                        public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                            String newTitle = dialog.getInputEditText().getText().toString().trim();
+                            DatabaseManager.get().renameLocation(originalTitle, newTitle);
+                            resyncWithDB();
+                            UIUtils.showSnackbar(parent, context.getString(R.string.location_renamed));
+                        }
+                    })
+                    .show();
         }
     }
 

@@ -11,6 +11,7 @@ import android.os.Handler;
 import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
+import android.text.InputType;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -159,6 +160,7 @@ public class MainActivity extends StandardActivity {
                 .cancelable(false)
                 .title(R.string.set_location_title)
                 .alwaysCallInputCallback()
+                .inputType(InputType.TYPE_TEXT_FLAG_CAP_WORDS)
                 .input(hint, "", new MaterialDialog.InputCallback() {
                     @Override
                     public void onInput(@NonNull MaterialDialog dialog, CharSequence input) {

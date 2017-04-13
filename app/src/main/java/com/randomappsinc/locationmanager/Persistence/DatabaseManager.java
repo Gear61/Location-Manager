@@ -82,6 +82,18 @@ public class DatabaseManager {
         });
     }
 
+    public void renameLocation(final String oldTitle, final String newTitle) {
+        getRealm().executeTransaction(new Realm.Transaction() {
+            @Override
+            public void execute(Realm realm) {
+                SavedLocationDO locationDO = realm.where(SavedLocationDO.class)
+                        .equalTo("title", oldTitle)
+                        .findFirst();
+                locationDO.setTitle(newTitle);
+            }
+        });
+    }
+
     public boolean isDuplicate(String title) {
         return getRealm().where(SavedLocationDO.class)
                 .equalTo("title", title)

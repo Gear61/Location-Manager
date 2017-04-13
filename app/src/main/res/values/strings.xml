@@ -45,4 +45,9 @@
     <string name="confirm_delete">Are you sure you want to delete the location &quot;%s&quot;?</string>
     <string name="yes">Yes</string>
     <string name="location_deleted">Location deleted.</string>
+
+    <string name="edit_location_title">Edit Location Title</string>
+    <string name="location_title">Location title</string>
+    <string name="rename">Rename</string>
+    <string name="location_renamed">Location renamed.</string>
 </resources>
