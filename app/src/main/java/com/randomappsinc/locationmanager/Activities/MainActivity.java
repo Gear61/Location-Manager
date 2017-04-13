@@ -64,7 +64,7 @@ public class MainActivity extends StandardActivity {
         context = this;
 
         addLocation.setImageDrawable(new IconDrawable(this, IoniconsIcons.ion_location).colorRes(R.color.white));
-        locationsAdapter = new LocationsAdapter(this, noLocations);
+        locationsAdapter = new LocationsAdapter(this, noLocations, parent);
         locations.setAdapter(locationsAdapter);
 
         locationChecker = new Handler();
@@ -175,6 +175,7 @@ public class MainActivity extends StandardActivity {
                         String title = dialog.getInputEditText().getText().toString().trim();
                         DatabaseManager.get().addLocation(location, title);
                         locationsAdapter.resyncWithDB();
+                        UIUtils.showSnackbar(parent, getString(R.string.location_added));
                     }
                 })
                 .show();

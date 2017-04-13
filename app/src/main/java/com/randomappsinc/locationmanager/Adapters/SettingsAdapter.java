@@ -17,9 +17,9 @@ import butterknife.ButterKnife;
  */
 
 public class SettingsAdapter extends BaseAdapter {
+    private Context context;
     private String[] itemNames;
     private String[] itemIcons;
-    private Context context;
 
     public SettingsAdapter(Context context) {
         this.context = context;
@@ -66,9 +66,7 @@ public class SettingsAdapter extends BaseAdapter {
         } else {
             holder = (SettingsViewHolder) view.getTag();
         }
-
         holder.loadItem(position);
-
         return view;
     }
 }

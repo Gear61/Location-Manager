@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import io.realm.Realm;
+import io.realm.Sort;
 
 /**
  * Created by alexanderchiou on 4/9/17.
@@ -42,7 +43,9 @@ public class DatabaseManager {
 
     public List<SavedLocation> getLocations() {
         List<SavedLocation> locations = new ArrayList<>();
-        List<SavedLocationDO> savedLocationDOs = getRealm().where(SavedLocationDO.class).findAll();
+        List<SavedLocationDO> savedLocationDOs = getRealm()
+                .where(SavedLocationDO.class)
+                .findAllSorted("timeAdded", Sort.DESCENDING);
         for (SavedLocationDO savedLocationDO : savedLocationDOs) {
             SavedLocation savedLocation = new SavedLocation();
             savedLocation.setTitle(savedLocationDO.getTitle());
@@ -66,6 +69,15 @@ public class DatabaseManager {
                 savedLocationDO.setLongitude(location.getLongitude());
                 savedLocationDO.setTimeAdded(System.currentTimeMillis());
                 realm.insert(savedLocationDO);
+            }
+        });
+    }
+
+    public void removeLocation(final String title) {
+        getRealm().executeTransaction(new Realm.Transaction() {
+            @Override
+            public void execute(Realm realm) {
+                realm.where(SavedLocationDO.class).equalTo("title", title).findFirst().deleteFromRealm();
             }
         });
     }

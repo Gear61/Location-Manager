@@ -1,21 +1,26 @@
 package com.randomappsinc.locationmanager.Adapters;
 
 import android.content.Context;
+import android.support.annotation.NonNull;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
 
+import com.afollestad.materialdialogs.DialogAction;
+import com.afollestad.materialdialogs.MaterialDialog;
 import com.randomappsinc.locationmanager.Models.SavedLocation;
 import com.randomappsinc.locationmanager.Persistence.DatabaseManager;
 import com.randomappsinc.locationmanager.R;
+import com.randomappsinc.locationmanager.Utils.UIUtils;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 
 /**
  * Created by alexanderchiou on 4/10/17.
@@ -25,11 +30,13 @@ public class LocationsAdapter extends BaseAdapter {
     private Context context;
     private List<SavedLocation> savedLocations;
     private View noLocations;
+    private View parent;
 
-    public LocationsAdapter(Context context, View noLocations) {
+    public LocationsAdapter(Context context, View noLocations, View parent) {
         this.context = context;
         this.savedLocations = new ArrayList<>();
         this.noLocations = noLocations;
+        this.parent = parent;
         resyncWithDB();
     }
 
@@ -60,15 +67,43 @@ public class LocationsAdapter extends BaseAdapter {
         @BindView(R.id.address) TextView address;
         @BindView(R.id.latlong) TextView latLong;
 
+        private int position;
+
         public SettingsViewHolder(View view) {
             ButterKnife.bind(this, view);
         }
 
         public void loadItem(int position) {
+            this.position = position;
             SavedLocation savedLocation = getItem(position);
             title.setText(savedLocation.getTitleText());
             address.setText(savedLocation.getAddressText());
             latLong.setText(savedLocation.getLatLongText());
+        }
+
+        @OnClick(R.id.delete_icon)
+        public void deleteLocation() {
+            final String title = getItem(position).getTitle();
+            String confirm = String.format(context.getString(R.string.confirm_delete), title);
+
+            new MaterialDialog.Builder(context)
+                    .content(confirm)
+                    .positiveText(R.string.yes)
+                    .negativeText(android.R.string.no)
+                    .onPositive(new MaterialDialog.SingleButtonCallback() {
+                        @Override
+                        public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                            DatabaseManager.get().removeLocation(title);
+                            resyncWithDB();
+                            UIUtils.showSnackbar(parent, context.getString(R.string.location_deleted));
+                        }
+                    })
+                    .show();
+        }
+
+        @OnClick(R.id.edit_icon)
+        public void editTitle() {
+
         }
     }
 
