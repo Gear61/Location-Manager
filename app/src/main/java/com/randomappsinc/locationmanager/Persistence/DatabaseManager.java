@@ -46,6 +46,7 @@ public class DatabaseManager {
         List<SavedLocationDO> savedLocationDOs = getRealm()
                 .where(SavedLocationDO.class)
                 .findAllSorted("timeAdded", Sort.DESCENDING);
+
         for (SavedLocationDO savedLocationDO : savedLocationDOs) {
             SavedLocation savedLocation = new SavedLocation();
             savedLocation.setTitle(savedLocationDO.getTitle());
@@ -55,6 +56,32 @@ public class DatabaseManager {
             savedLocation.setTimeAdded(savedLocationDO.getTimeAdded());
             locations.add(savedLocation);
         }
+
+        SavedLocation location1 = new SavedLocation();
+        location1.setTitle("Home");
+        location1.setAddress("680 Mission St, San Francisco, CA 94105");
+        location1.setLatitude(37.786744);
+        location1.setLongitude(-122.401752);
+        location1.setTimeAdded(0);
+
+        SavedLocation location2 = new SavedLocation();
+        location2.setTitle("Work");
+        location2.setAddress("1455 Market St, San Francisco, CA 94103");
+        location2.setLatitude(37.775228);
+        location2.setLongitude(-122.417563);
+        location2.setTimeAdded(1);
+
+        SavedLocation location3 = new SavedLocation();
+        location3.setTitle("Where I Parked My Car");
+        location3.setAddress("123 O'Farrell St, San Francisco, CA 94102");
+        location3.setLatitude(37.785767);
+        location3.setLongitude(-122.407133);
+        location3.setTimeAdded(2);
+
+        locations.add(location3);
+        locations.add(location2);
+        locations.add(location1);
+
         return locations;
     }
 

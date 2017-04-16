@@ -134,7 +134,9 @@ public class MainActivity extends StandardActivity {
         locationChecker.removeCallbacks(locationCheckTask);
 
         if (SmartLocation.with(this).location().state().locationServicesEnabled()) {
-            fetchingLocation.show();
+            setTitle(new Location("Place"));
+
+            /* fetchingLocation.show();
             locationFetched = false;
             SmartLocation.with(this).location()
                     .oneFix()
@@ -148,7 +150,7 @@ public class MainActivity extends StandardActivity {
                             setTitle(location);
                         }
                     });
-            locationChecker.postDelayed(locationCheckTask, 10000L);
+            locationChecker.postDelayed(locationCheckTask, 10000L); */
         } else {
             showLocationServicesDialog();
         }
