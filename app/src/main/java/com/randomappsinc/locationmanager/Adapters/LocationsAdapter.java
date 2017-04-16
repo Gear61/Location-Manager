@@ -85,7 +85,7 @@ public class LocationsAdapter extends BaseAdapter {
         @OnClick(R.id.delete_icon)
         public void deleteLocation() {
             final String title = getItem(position).getTitle();
-            String confirm = String.format(context.getString(R.string.confirm_delete), title);
+            String confirm = String.format(context.getString(R.string.confirm_delete), "\"" + title + "\"");
 
             new MaterialDialog.Builder(context)
                     .content(confirm)
