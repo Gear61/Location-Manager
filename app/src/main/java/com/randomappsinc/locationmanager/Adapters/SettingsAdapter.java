@@ -12,11 +12,8 @@ import com.randomappsinc.locationmanager.R;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-/**
- * Created by alexanderchiou on 4/9/17.
- */
-
 public class SettingsAdapter extends BaseAdapter {
+
     private Context context;
     private String[] itemNames;
     private String[] itemIcons;

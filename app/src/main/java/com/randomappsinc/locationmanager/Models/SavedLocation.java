@@ -7,11 +7,8 @@ import android.text.Spanned;
 import com.randomappsinc.locationmanager.R;
 import com.randomappsinc.locationmanager.Utils.MyApplication;
 
-/**
- * Created by alexanderchiou on 4/10/17.
- */
-
 public class SavedLocation {
+
     private String title;
     private String address;
     private double latitude;

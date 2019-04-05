@@ -12,11 +12,8 @@ import java.util.List;
 import io.realm.Realm;
 import io.realm.Sort;
 
-/**
- * Created by alexanderchiou on 4/9/17.
- */
-
 public class DatabaseManager {
+
     private static DatabaseManager instance;
 
     public static DatabaseManager get() {
@@ -45,7 +42,8 @@ public class DatabaseManager {
         List<SavedLocation> locations = new ArrayList<>();
         List<SavedLocationDO> savedLocationDOs = getRealm()
                 .where(SavedLocationDO.class)
-                .findAllSorted("timeAdded", Sort.DESCENDING);
+                .findAll()
+                .sort("timeAdded", Sort.DESCENDING);
         for (SavedLocationDO savedLocationDO : savedLocationDOs) {
             SavedLocation savedLocation = new SavedLocation();
             savedLocation.setTitle(savedLocationDO.getTitle());

@@ -2,8 +2,8 @@ package com.randomappsinc.locationmanager.Utils;
 
 import android.app.Activity;
 import android.content.pm.PackageManager;
-import android.support.v13.app.ActivityCompat;
-import android.support.v4.content.ContextCompat;
+import androidx.legacy.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 
 /**
  * Created by alexanderchiou on 4/9/17.

@@ -9,11 +9,8 @@ import com.randomappsinc.locationmanager.R;
 import java.util.List;
 import java.util.Locale;
 
-/**
- * Created by alexanderchiou on 4/10/17.
- */
-
 public class LocationUtils {
+
     public static String getAddressFromLocation(Location location) {
         try {
             Geocoder geocoder = new Geocoder(MyApplication.getAppContext(), Locale.getDefault());

@@ -9,8 +9,8 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.provider.Settings;
-import android.support.annotation.NonNull;
-import android.support.design.widget.FloatingActionButton;
+import androidx.annotation.NonNull;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import android.text.InputType;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -37,6 +37,7 @@ import io.nlopez.smartlocation.OnLocationUpdatedListener;
 import io.nlopez.smartlocation.SmartLocation;
 
 public class MainActivity extends StandardActivity {
+
     @BindView(R.id.parent) View parent;
     @BindView(R.id.locations) ListView locations;
     @BindView(R.id.no_locations) View noLocations;
